@@ -1,8 +1,8 @@
 {
-  "mongoURI": "mongodb+srv://sila:v3ulQLfD02RnNY21@cluster0-en67d.mongodb.net/mern?retryWrites=true&w=majority",
-  "MAPBOX_API_KEY": "pk.eyJ1IjoiYnNpbGFrYXltYWsiLCJhIjoiY2s3aWJscnFwMGhwMTNvbnh2bjhxMGliMSJ9.jCsNT84JezjHr2eBHpt4IA",
-  "JWT_KEY": "sila_secret_key",
-  "CLOUD_NAME": "dbe9qqzrl",
-  "CLOUDINARY_API_KEY": "445583714443826",
-  "CLOUDINARY_API_SECRET": "ZNCDRtB8QssG8TZxLQE1kumlrXk"
+  "mongoURI": ,
+  "MAPBOX_API_KEY":,
+  "JWT_KEY": ,
+  "CLOUD_NAME": ,
+  "CLOUDINARY_API_KEY":, 
+  "CLOUDINARY_API_SECRET": 
 }
