@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import Avatar from "../../shared/component/UIElements/Avatar";
 import Card from "../../shared/component/UIElements/Card";
 import "./UserItem.css";
+import { AuthContext } from "../../shared/context/auth-context";
 const UserItem = ({ user }) => {
   const { id, image, name, places } = user;
-
+  const auth = useContext(AuthContext);
   return (
     <li className="user-item">
       <Card className="user-item__content">
@@ -20,9 +21,11 @@ const UserItem = ({ user }) => {
             </h3>
           </div>
         </Link>
-        <Link to={`/${id}/mybucketlist`}>
-          <h4>See Bucket List</h4>
-        </Link>
+        <div className="user-item__icon">
+          <Link to={`/${id}/mybucketlist`}>
+            <img src="/images/bucketicon.png" style={{ width: "100%" }}></img>
+          </Link>
+        </div>
       </Card>
     </li>
   );

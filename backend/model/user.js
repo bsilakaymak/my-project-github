@@ -37,7 +37,7 @@ const userSchema = new Schema({
       id:{ type: mongoose.Types.ObjectId, required: true, ref: "Place" },
       _id:false,
       createdBy: {type:String},
-      isVisited:  {type:Boolean, required:true}
+      isVisited:  {type:Boolean}
 
     }
   ]

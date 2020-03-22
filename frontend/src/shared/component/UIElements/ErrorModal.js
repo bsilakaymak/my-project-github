@@ -3,15 +3,15 @@ import React from "react";
 import Modal from "./Modal";
 import Button from "../formElements/Button";
 
-const ErrorModal = ({ error, onClear }) => {
+const ErrorModal = ({ error, onClear, header }) => {
   return (
     <Modal
       onCancel={onClear}
-      header='An Error Occurred!'
+      header={header || "An Error Occurred!!!"}
       show={!!error}
       footer={<Button onClick={onClear}>Okay</Button>}
     >
-      <p>{error}</p>
+      <div>{error}</div>
     </Modal>
   );
 };

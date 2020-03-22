@@ -71,7 +71,7 @@ const getBucketListByUserId = async (req, res, next) => {
   } catch (error) {
     return next(
       new HttpError(
-        "Somthing went wrong, could not find a place for the provided id.",
+        "Something went wrong, could not find a place for the provided id.",
         500
       )
     );
@@ -158,14 +158,18 @@ const addToBucketList = async (req, res, next) => {
 const deleteFromBucketList = async (req, res, next) => {
   const placeId = req.params.pid;
   const userId = req.userData.userId;
-  try {
-    currentUser = await User.findById(userId);
-    await currentUser.bucketList.pull({ id: placeId });
-    await currentUser.save();
-  } catch (error) {
-    return next(new HttpError(`${error}`, 500));
+  if (req.userData.userId == userId) {
+    try {
+      currentUser = await User.findById(userId);
+      await currentUser.bucketList.pull({ id: placeId });
+      await currentUser.save();
+    } catch (error) {
+      return next(new HttpError(`${error}`, 500));
+    }
+    res.status(200).json({ message: "place deleted from bucket list" });
+  } else {
+    return next(new Error("You are not authorized to delete this place", 401));
   }
-  res.status(200).json({ message: "place deleted from bucket list" });
 };
 
 const visitedPlace = async (req, res, next) => {
@@ -307,18 +311,20 @@ const deletePlaceById = async (req, res, next) => {
     if (error)
       throw new HttpError("Something went wrong, could not delete image.", 500);
   });
+
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
     await place.remove({ session: sess });
     place.creator.places.pull(place);
-
     await place.creator.save({ session: sess });
+    await User.updateMany(
+      { "bucketList.id": placeId },
+      { $pull: { bucketList: { id: placeId } } }
+    );
     await sess.commitTransaction();
   } catch (error) {
-    return next(
-      new HttpError("Something went wrong, could not delete place.", 500)
-    );
+    return next(new HttpError(`${error}`, 500));
   }
 
   res.status(200).json({ message: "Place deleted" });

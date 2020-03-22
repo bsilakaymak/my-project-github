@@ -11,7 +11,7 @@ const Users = () => {
     const getUsers = async () => {
       try {
         const data = await sendRequest(
-          `http://localhost:5000/api/users`
+          `${process.env.REACT_APP_BACKEND_URL}/users`
         );
 
         setUsers(data.users);

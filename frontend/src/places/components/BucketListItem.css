@@ -1,0 +1,42 @@
+.bucket-list-item {
+  position: relative;
+  list-style: none;
+  margin: 0.5em auto;
+  padding: 1rem;
+  width: 90%;
+  max-width: 30rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  border-radius: 6px;
+  background: white;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bucket-creator a {
+  text-decoration: none;
+  font-size: 1em;
+}
+
+.bucket-info {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  padding: 1em;
+  text-align: center;
+}
+
+.bucket-image {
+  width: 35%;
+}
+
+.shadowS {
+  display: block;
+  width: 40%;
+  background-color: wheat;
+  height: 7em;
+  margin: auto;
+}

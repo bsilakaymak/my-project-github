@@ -13,6 +13,8 @@ const PlaceItem = ({ place, onDeletePlace }) => {
   const auth = useContext(AuthContext);
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showTravelWishButton, setShowTravelWishButton] = useState(true);
+  const [showTick, setShowTick] = useState(false);
   const openMapHandler = () => setShowMap(true);
   const closeMapHandler = () => setShowMap(false);
   const { id, image, name, title, address, description, location } = place;
@@ -23,12 +25,12 @@ const PlaceItem = ({ place, onDeletePlace }) => {
   const cancelDeleteHandler = () => {
     setShowConfirmModal(false);
   };
-  
+
   const confirmDeleteHandler = async () => {
     setShowConfirmModal(false);
     try {
       await sendRequest(
-        `http://localhost:5000/api/places/${id}`,
+        `${process.env.REACT_APP_BACKEND_URL}/places/${id}`,
         "DELETE",
         null,
         {
@@ -38,21 +40,55 @@ const PlaceItem = ({ place, onDeletePlace }) => {
       onDeletePlace(id);
     } catch (error) {}
   };
-  const [added, setAdded] = useState(false);
   const addBucketList = async () => {
     try {
+      setShowTravelWishButton(false);
       await sendRequest(
-        `http://localhost:5000/api/places/user/${id}`,
+        `${process.env.REACT_APP_BACKEND_URL}/places/user/${id}`,
         "PATCH",
         null,
         {
           Authorization: "Bearer " + auth.token
         }
       );
-      setAdded(true);
-    } catch (error) {}
+      setShowTick(true);
+    } catch (error) {
+      setShowTravelWishButton(true);
+    }
   };
+  const [users, setUsers] = useState();
+  useEffect(() => {
+    const getUsers = async () => {
+      try {
+        const data = await sendRequest(
+          `${process.env.REACT_APP_BACKEND_URL}/users`
+        );
+        setUsers(data.users);
+      } catch (error) {}
+    };
+    getUsers();
+  }, [sendRequest]);
 
+  const checkAdded = users => {
+    if (!auth.userId) {
+      return false;
+    }
+    const currentUser = users.find(item => item._id === auth.userId);
+    const nonUniqueArray = currentUser.bucketList.filter(item => {
+      return item.id === id;
+    });
+    if (nonUniqueArray.length === 0) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+  if (isLoading)
+    return (
+      <div className="center">
+        <LoadingSpinner />
+      </div>
+    );
   return (
     <Fragment>
       <ErrorModal error={error} onClear={clearError} />
@@ -90,35 +126,49 @@ const PlaceItem = ({ place, onDeletePlace }) => {
           undone thereafter.
         </p>
       </Modal>
-      <li className="place-item">
-        <Card className="place-item__content">
-          {isLoading && <LoadingSpinner asOverlay />}
-          <div className="place-item__image">
-            <img src={image.imageUrl} alt={name} />
-          </div>
-          <div className="place-item__info">
-            <h2>{title}</h2>
-            <h3>{address}</h3>
-            <p>{description}</p>
-          </div>
-          <div className="place-item__actions">
-            <Button inverse onClick={openMapHandler}>
-              VIEW ON MAP
-            </Button>
-            {place.creator === auth.userId && (
-              <Button to={`/places/${id}`}>EDIT</Button>
-            )}
-            {place.creator === auth.userId && (
-              <Button danger onClick={showDeleteWaringHandler}>
-                DELETE
+      {users && (
+        <li className="place-item">
+          <Card className="place-item__content">
+            {isLoading && <LoadingSpinner asOverlay />}
+            <div className="place-item__image">
+              <img src={image.imageUrl} alt={name} />
+            </div>
+            <div className="place-item__info">
+              <p>{JSON.stringify()}</p>
+              <h2>{title}</h2>
+              <h3>{address}</h3>
+              <p>{description}</p>
+            </div>
+            <div className="place-item__actions">
+              <Button inverse onClick={openMapHandler}>
+                VIEW ON MAP
               </Button>
-            )}
-            {place.creator !== auth.userId && !added && (
-              <Button onClick={addBucketList}>ADD TO BUCKET LIST</Button>
-            )}
-          </div>
-        </Card>
-      </li>
+              {place.creator === auth.userId && (
+                <Button to={`/places/${id}`}>EDIT</Button>
+              )}
+              {place.creator === auth.userId && (
+                <Button danger onClick={showDeleteWaringHandler}>
+                  DELETE
+                </Button>
+              )}
+              {auth.token &&
+                place.creator !== auth.userId &&
+                showTravelWishButton &&
+                !checkAdded(users) && (
+                  <Button onClick={addBucketList}>ADD TO BUCKET LIST</Button>
+                )}
+              {checkAdded(users) && auth.userId && (
+                <span className="animated">
+                  Already in your bucket &#9989;{" "}
+                </span>
+              )}
+              {showTick && (
+                <span className="fadeOut animated">Added &#9989; </span>
+              )}
+            </div>
+          </Card>
+        </li>
+      )}
     </Fragment>
   );
 };

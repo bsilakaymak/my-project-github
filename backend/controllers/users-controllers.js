@@ -21,7 +21,6 @@ const getUsers = async (req, res, next) => {
     .json({ users: users.map(user => user.toObject({ getters: true })) });
 };
 
-
 const signup = async (req, res, next) => {
   const error = validationResult(req);
 
@@ -46,14 +45,13 @@ const signup = async (req, res, next) => {
       email,
       image: result.url,
       password,
-      places: [],
-      bucketList: []
+      places: []
     });
 
     await createdUser.save();
   } catch (error) {
     return next(
-      new HttpError("Signin up  failed, please try again later. could not save", 500)
+      new HttpError(`${error}`, 500)
     );
   }
   let token;
@@ -65,7 +63,7 @@ const signup = async (req, res, next) => {
     );
   } catch (error) {
     return next(
-      new HttpError("Signing up failed, please try agein later could not create token", 500)
+      new HttpError("Signing up failed, please try agein later", 500)
     );
   }
   res
@@ -97,4 +95,55 @@ const login = async (req, res, next) => {
     .json({ userId: existingUser.id, email: existingUser.email, token });
 };
 
-module.exports = { getUsers, signup, login };
+const getUser = async (req, res, next) => {
+  let user;
+
+  try {
+    user = await User.findById(req.params.userId, "name image");
+  } catch (error) {
+    return next(
+      new HttpError("Fetching user failed, please try again later.", 500)
+    );
+  }
+  res
+    .status(200)
+    .json({ user: user.toObject({ getters: true })});
+};
+
+const updateUser = async (req, res, next) => {
+  let user;
+  let url;
+
+  if(req.params.userId !== req.userData.userId){
+    return next(
+      new HttpError("Not authorized.", 401)
+    );
+  }
+
+  if(req.file){
+    try{
+      const result = await cloudinary.uploader.upload(req.file.path);
+      url = result.url;
+    } catch {
+      return next(
+        new HttpError("Updating user failed, please try again later.", 500)
+      );
+    }
+  }
+
+  try {
+    user = await User.findById(req.params.userId);
+    user.name = req.body.name || user.name;
+    user.image = url || user.image;
+    await user.save();
+  } catch {
+    return next(
+      new HttpError("Updating user failed, please try again later.", 500)
+    );
+  }
+  res
+    .status(200)
+    .json({ user: {name: user.name, image: user.image}});
+};
+
+module.exports = { getUsers, signup, login, getUser, updateUser };

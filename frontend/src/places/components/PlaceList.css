@@ -5,3 +5,35 @@
   width: 90%;
   max-width: 40rem;
 }
+
+.animated {
+  animation-duration: 4s;
+  -webkit-animation-duration: 4s;
+  animation-fill-mode: both;
+  -webkit-animation-fill-mode: both;
+}
+
+@-webkit-keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.fadeOut {
+  -webkit-animation-name: fadeOut;
+  animation-name: fadeOut;
+}

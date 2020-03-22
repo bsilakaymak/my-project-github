@@ -2,10 +2,11 @@
   display: inline-block;
   width: 64px;
   height: 64px;
+  z-index: 4;
 }
 
 .lds-dual-ring:after {
-  content: ' ';
+  content: " ";
   display: block;
   width: 46px;
   height: 46px;

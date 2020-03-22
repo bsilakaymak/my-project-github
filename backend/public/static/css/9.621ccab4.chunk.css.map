@@ -1,0 +1,1 @@
+{"version":3,"sources":["Card.css"],"names":[],"mappings":"AAAA,MACE,iBAAkB,CAClB,oCAAyC,CACzC,iBAAkB,CAClB,eAAgB,CAChB,eAAiB,CACjB,YACF","file":"9.621ccab4.chunk.css","sourcesContent":[".card {\n  position: relative;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);\n  border-radius: 6px;\n  overflow: hidden;\n  background: white;\n  padding: 1rem;\n}\n"]}
